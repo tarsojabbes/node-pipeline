@@ -1,0 +1,68 @@
+version: 2.1
+executors:
+  gcloud-executor:
+    docker:
+      - image: google/cloud-sdk
+
+  machine-executor:
+    machine: true
+
+orbs:
+  node: circleci/node@5.1
+  gcp-gcr: circleci/gcp-gcr@0.15.3
+  cloudrun: circleci/gcp-cloud-run@1.0.2
+  gcp-gke: circleci/gcp-gke@2.2.0
+
+jobs:
+  tests:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          command: yarn test
+          name: Run tests
+      
+  build_push_image_gcr:
+    description: Build docker image and push to gcr registry
+    executor: machine-executor
+    steps:
+      - checkout
+      - run:
+          name: Prepare env vars
+          command: |
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+            echo $GCP_PROJECT_KEY > ./gcloud-service-key.json
+            cat ./gcloud-service-key.json
+            cat ${HOME}/gcloud-service-key.json
+            export $GCP_SERVICE_KEY=cat(${HOME}/gcloud-service-key.json)
+            pwd
+
+      - gcp-gcr/gcr-auth:
+          gcloud-service-key: GCLOUD_SERVICE_KEY
+          google-project-id: GOOGLE_PROJECT_ID
+
+      - gcp-gcr/build-image:
+          dockerfile: Dockerfile
+          google-project-id: GOOGLE_PROJECT_ID
+          image: $IMAGE_NAME
+          registry-url: "gcr.io"
+          tag: $CIRCLE_SHA1
+      - gcp-gcr/push-image:
+          google-project-id: GOOGLE_PROJECT_ID
+          image: $IMAGE_NAME
+          registry-url: "gcr.io"
+          tag: $CIRCLE_SHA1
+
+    gcp_cloudrun_deploy:
+    description: Deploy using cloud run
+    executor: machine-executor
+    steps:
+      - cloudrun/init
+      - cloudrun/deploy:
+          cluster: 'autopilot-cluster-1'
+          cluster-location: us-central1
+          platform: 'gke'
+          image: 'gcr.io/$GOOGLE_PROJECT_ID/$IMAGE_NAME:$CIRCLE_SHA1'
+          service-name: 'feedback-ui-service'
