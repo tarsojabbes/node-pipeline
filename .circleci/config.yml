@@ -13,6 +13,17 @@ orbs:
   cloudrun: circleci/gcp-cloud-run@1.0.2
   gcp-gke: circleci/gcp-gke@2.2.0
 
+workflows:
+  build_gcloud_deploy:
+    jobs:
+      - tests
+      - build_push_image_gcr:
+          requires:
+            - tests
+      - gcp_cloudrun_deploy:
+          requires:
+            - build_push_image_gcr
+
 jobs:
   tests:
     executor: node/default
