@@ -37,26 +37,10 @@ jobs:
       
   build_push_image_gcr:
     description: Build docker image and push to gcr registry
-    executor: machine-executor
+    executor: gcp-gcr/default
     steps:
       - checkout
-      - run:
-          name: Prepare env vars
-          command: |
-            echo -n "$GCLOUD_SERVICE_KEY" | base64 -d > ${HOME}/gcloud-service-key.json
-            cat ${HOME}/gcloud-service-key.json
-            chmod 777 ${HOME}/gcloud-service-key.json
-            export GCP_SERVICE_KEY=$(cat ${HOME}/gcloud-service-key.json)
-            echo $GCP_SERVICE_KEY
-            pwd
-
-      - run:
-          name: Checking gcloud-service-key.json
-          command: |
-            cat /home/circleci/gcloud-service-key.json
-
       - gcp-gcr/gcr-auth
-
       - gcp-gcr/build-image:
           dockerfile: Dockerfile
           google-project-id: GOOGLE_PROJECT_ID
