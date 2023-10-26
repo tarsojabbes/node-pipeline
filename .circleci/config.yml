@@ -52,7 +52,7 @@ jobs:
       - run:
           name: Checking gcloud-service-key.json
           command: |
-            cat ${HOME}/gcloud-service-key.json
+            cat /home/circleci/gcloud-service-key.json
 
       - gcp-gcr/gcr-auth:
           gcloud-service-key: GCLOUD_SERVICE_KEY
