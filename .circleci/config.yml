@@ -54,9 +54,7 @@ jobs:
           command: |
             cat /home/circleci/gcloud-service-key.json
 
-      - gcp-gcr/gcr-auth:
-          gcloud-service-key: GCLOUD_SERVICE_KEY
-          google-project-id: GOOGLE_PROJECT_ID
+      - gcp-gcr/gcr-auth
 
       - gcp-gcr/build-image:
           dockerfile: Dockerfile
