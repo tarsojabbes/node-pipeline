@@ -45,6 +45,7 @@ jobs:
           command: |
             echo -n "$GCLOUD_SERVICE_KEY" | base64 -d > ${HOME}/gcloud-service-key.json
             cat ${HOME}/gcloud-service-key.json
+            chmod 777 ${HOME}/gcloud-service-key.json
             export GCP_SERVICE_KEY=$(cat ${HOME}/gcloud-service-key.json)
             echo $GCP_SERVICE_KEY
             pwd
