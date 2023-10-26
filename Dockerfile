@@ -1,7 +1,7 @@
 FROM node:lts-alpine
 
 # instala um servidor http simples para servir conteúdo estático
-RUN yarn install -g http-server
+RUN yarn global add http-server
 
 # faz da pasta 'app' o diretório atual de trabalho
 WORKDIR /app
