@@ -49,6 +49,11 @@ jobs:
             echo $GCP_SERVICE_KEY
             pwd
 
+      - run:
+          name: Checking gcloud-service-key.json
+          command: |
+            cat ${HOME}/gcloud-service-key.json
+
       - gcp-gcr/gcr-auth:
           gcloud-service-key: GCLOUD_SERVICE_KEY
           google-project-id: GOOGLE_PROJECT_ID
@@ -59,6 +64,7 @@ jobs:
           image: $IMAGE_NAME
           registry-url: "gcr.io"
           tag: $CIRCLE_SHA1
+
       - gcp-gcr/push-image:
           google-project-id: GOOGLE_PROJECT_ID
           image: $IMAGE_NAME
