@@ -43,14 +43,14 @@ jobs:
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
           dockerfile: Dockerfile
-          google-project-id: GOOGLE_PROJECT_ID
-          image: $IMAGE_NAME
+          google-project-id: angular-shore-396222
+          image: vue_application
           registry-url: "gcr.io"
           tag: $CIRCLE_SHA1
 
       - gcp-gcr/push-image:
-          google-project-id: GOOGLE_PROJECT_ID
-          image: $IMAGE_NAME
+          google-project-id: angular-shore-396222
+          image: vue_application
           registry-url: "gcr.io"
           tag: $CIRCLE_SHA1
 
@@ -63,5 +63,5 @@ jobs:
           cluster: 'autopilot-cluster-1'
           cluster-location: us-central1
           platform: 'gke'
-          image: 'gcr.io/$GOOGLE_PROJECT_ID/$IMAGE_NAME:$CIRCLE_SHA1'
+          image: 'gcr.io/angular-shore-396222/vue_application:$CIRCLE_SHA1'
           service-name: 'feedback-ui-service'
