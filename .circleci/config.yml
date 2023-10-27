@@ -38,7 +38,6 @@ jobs:
     steps:
       - checkout
       - cloudrun/init
-      - run:
       - cloudrun/build:
           tag: gcr.io/$GOOGLE_PROJECT_ID/vue-application:$CIRCLE_SHA1
       - cloudrun/deploy:
