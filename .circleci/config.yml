@@ -39,7 +39,7 @@ jobs:
       - checkout
       - cloudrun/init
       - run:
-        - command: |
+        command: |
           gcloud config set project ${PROJETO_ID}
       - cloudrun/build:
           tag: gcr.io/$GOOGLE_PROJECT_ID/vue-application:$CIRCLE_SHA1
