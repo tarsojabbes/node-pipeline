@@ -39,10 +39,10 @@ jobs:
       - checkout
       - cloudrun/init
       - cloudrun/build:
-          tag: gcr.io/${GOOGLE_PROJECT_ID}/vue-application:$CIRCLE_SHA1
+          tag: gcr.io/$GOOGLE_PROJECT_ID/vue-application:$CIRCLE_SHA1
       - cloudrun/deploy:
           cluster: 'autopilot-cluster-1'
           cluster-location: us-central1
           platform: 'gke'
-          image: gcr.io/${GOOGLE_PROJECT_ID}/vue-application:$CIRCLE_SHA1
+          image: gcr.io/$GOOGLE_PROJECT_ID/vue-application:$CIRCLE_SHA1
           service-name: 'feedback-ui-service'
