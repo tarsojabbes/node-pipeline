@@ -16,12 +16,9 @@ workflows:
   build_gcloud_deploy:
     jobs:
       - tests
-      - build_push_image_gcr:
+      - build_and_deploy_gke:
           requires:
             - tests
-      - gcp_cloudrun_deploy:
-          requires:
-            - build_push_image_gcr
 
 jobs:
   tests:
@@ -34,32 +31,18 @@ jobs:
           command: yarn test:unit
           name: Run tests
       
-  build_push_image_gcr:
-    description: Build docker image and push to gcr registry
-    executor: gcp-gcr/default
-    steps:
-      - checkout
-      - gcp-gcr/gcr-auth
-      - gcp-gcr/build-image:
-          dockerfile: Dockerfile
-          image: vue-application
-          registry-url: "gcr.io"
-          tag: $CIRCLE_SHA1
-
-      - gcp-gcr/push-image:
-          image: vue-application
-          registry-url: "gcr.io"
-          tag: $CIRCLE_SHA1
-
-  gcp_cloudrun_deploy:
+  build_and_deploy_gke:
     description: Deploy using cloud run
     docker:
       - image: cimg/base:stable
     steps:
+      - checkout
       - cloudrun/init
+      - cloudrun/build:
+          tag: gcr.io/${GOOGLE_PROJECT_ID}/vue-application:$CIRCLE_SHA1
       - cloudrun/deploy:
           cluster: 'autopilot-cluster-1'
           cluster-location: us-central1
           platform: 'gke'
-          image: 'gcr.io/${GOOGLE_PROJECT_ID}/vue-application:$CIRCLE_SHA1'
+          image: gcr.io/${GOOGLE_PROJECT_ID}/vue-application:$CIRCLE_SHA1
           service-name: 'feedback-ui-service'
