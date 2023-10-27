@@ -11,7 +11,6 @@ orbs:
   node: circleci/node@5.1
   gcp-gcr: circleci/gcp-gcr@0.15.3
   cloudrun: circleci/gcp-cloud-run@1.0.2
-  gcp-gke: circleci/gcp-gke@2.2.0
 
 workflows:
   build_gcloud_deploy:
@@ -54,7 +53,8 @@ jobs:
 
   gcp_cloudrun_deploy:
     description: Deploy using cloud run
-    executor: machine-executor
+    docker:
+      - image: cimg/base:stable
     steps:
       - cloudrun/init
       - cloudrun/deploy:
