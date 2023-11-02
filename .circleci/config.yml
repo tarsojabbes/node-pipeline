@@ -37,6 +37,11 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
+      - run:
+          name: Debug Configurations
+          command: |
+            gcloud config list
+            echo "GOOGLE_PROJECT_ID: $GOOGLE_PROJECT_ID"
       - cloudrun/init
       - cloudrun/build:
           tag: gcr.io/$GOOGLE_PROJECT_ID/vue-application:$CIRCLE_SHA1
